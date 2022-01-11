@@ -1,6 +1,6 @@
 import express,{Response} from "express"
-import {connectDB} from './database/db.config'
-import {users} from './database/schema/userSchema'
+import {connectDB} from './config/db.config'
+import {users} from './model/user.model'
 const app=express()
 
 connectDB()
@@ -15,7 +15,7 @@ test()
 
 
 app.get('/',(_,res:Response)=>{
- res.status(200).send("Hello")
+ res.status(200).send("Hello from branch develop")
 })
 
 
