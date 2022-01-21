@@ -22,7 +22,8 @@
 		"experimentalDecorators": true,
 		"resolveJsonModule": true,
 		"useUnknownInCatchVariables": true,
-		"alwaysStrict": true
+		"alwaysStrict": true,
+		"skipLibCheck": true
 	},
 	"exclude": ["node_modules"],
 	"include": ["./src/**/*.tsx", "./src/**/*.ts"]
