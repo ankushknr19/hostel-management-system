@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import dotenv from 'dotenv'
 import mongoose, { Schema, model } from 'mongoose'
 import bcrypt from 'bcrypt'
@@ -76,3 +77,29 @@ userSchema.methods.comparePassword = async function (
 }
 
 export const UserModel = model<UserDocument>('User', userSchema)
+=======
+import {Schema, model} from 'mongoose'
+
+//sub document to nest on user schema
+const hostelSchema = new Schema({
+    name: {type: String, required: true},
+    address: {
+        district: {type: String, required: true},
+        city: {type: String, required: true},
+        ward: {type: String, required: true},
+        street: String
+    }    
+},{_id: false})
+
+const userSchema = new Schema(
+    {
+        email: {type: String, required: true, unique: true},
+        password: {type: String, required: true, select: false},
+        phone_number: {type: Number, required: true, unique: true},
+        hostel: hostelSchema //nested schema
+    },
+    {timestamps: true}
+)
+
+export const UserModel = model('User', userSchema)
+>>>>>>> 3953467e58d0e36dbdf61ab30061a57f1403b162

@@ -1,7 +1,10 @@
 import {Request, Response} from 'Express'
 import { HostelerModel } from "../models/hosteler.model"
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3953467e58d0e36dbdf61ab30061a57f1403b162
 // @desc register a new user
 // @route POST /api/users
 // @access private/user
@@ -32,8 +35,12 @@ export const createHosteler = async(req: Request, res: Response) => {
                newHosteler
             }
         )   
+<<<<<<< HEAD
       
       
+=======
+        
+>>>>>>> 3953467e58d0e36dbdf61ab30061a57f1403b162
     } catch (error: any) {
        res.status(404).send(error.message)
     }
