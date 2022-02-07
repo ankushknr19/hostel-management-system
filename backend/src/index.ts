@@ -1,26 +1,31 @@
-import express,{Response} from "express"
-import {connectDB} from './config/db.config'
-import {users} from './model/user.model'
-const app=express()
+import dotenv from 'dotenv'
+import express, { Request, Response } from 'express'
+import { connectDB } from './utils/db.connect'
+import roomRoutes from './routes/room.routes'
+import userRoutes from './routes/user.routes'
+import hostelRoutes from './routes/hostel.routes'
+import sessionRoutes from './routes/session.routes'
+import { deserialzeUser } from './middlewares/deserializeUser'
+
+dotenv.config()
+const app = express()
+
+app.use(express.json())
+app.use(deserialzeUser)
 
 connectDB()
 
-const test=async()=>{
-    await users.create({name:'rajeev'})
+app.use('/api/rooms', roomRoutes)
+app.use('/api/users', userRoutes)
+app.use('/api/hostel', hostelRoutes)
+app.use('/api/sessions', sessionRoutes)
 
-}
-
-test()
-
-
-
-app.get('/',(_,res:Response)=>{
- res.status(200).send("Hello from branch develop")
+app.get('/', (_req: Request, res: Response) => {
+  res.status(200).send(`api is running...`)
 })
 
+const { PORT } = process.env
 
-const port = process.env.PORT || 5000
-
-app.listen(port,()=>{
-    console.log(`running on port ${port}`)
+app.listen(PORT, () => {
+  console.log(`server is running on port http://localhost:${PORT}`)
 })
