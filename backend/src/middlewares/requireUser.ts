@@ -8,10 +8,10 @@ export const requireUser = (
   next: NextFunction
 ) => {
   const user = res.locals.user
-  //in deserialzedUser, we put the user in the response object because they had a valid token
+  //in deserialzeUser, we put the user in the response object because they had a valid token
 
   if (!user) {
-    return res.sendStatus(403)
+    return res.status(403).send('invalid token') //forbidden
   }
 
   return next()

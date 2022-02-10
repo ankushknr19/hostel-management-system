@@ -1,7 +1,7 @@
 import { model, Schema, Document } from 'mongoose'
 import { UserDocument } from './user.model'
 
-export interface SchemaDocument extends Document {
+export interface SessionDocument extends Document {
   user: UserDocument['_id']
   valid: boolean
   createdAt: Date
@@ -16,4 +16,4 @@ const SessionSchema = new Schema(
   { timestamps: true }
 )
 
-export const SessionModel = model<SchemaDocument>('Session', SessionSchema)
+export const SessionModel = model<SessionDocument>('Session', SessionSchema)

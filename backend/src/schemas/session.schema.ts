@@ -7,8 +7,10 @@ export const createSessionSchema = z.object({
         required_error: 'Email is required',
       })
       .email('Not a valid email'),
-    password: z.string({
-      required_error: 'Password is required',
-    }),
+    password: z
+      .string({
+        required_error: 'Password is required',
+      })
+      .min(6, 'Password should be of at least 6 characters'),
   }),
 })

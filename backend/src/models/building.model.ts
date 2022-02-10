@@ -1,7 +1,19 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model, Document } from 'mongoose'
+import { UserDocument } from './user.model'
+
+export interface BuildingDocument extends Document {
+  user: UserDocument['_id']
+  building_name: string
+  hostel_name: string
+  floor_count: [
+    {
+      floor_number: number
+    room_count: number
+    }
+  ]
+  }
 
 const floorSchema = new Schema(
-<<<<<<< HEAD
   {
     floor_number: { type: Number },
     room_count: { type: Number },
@@ -11,12 +23,12 @@ const floorSchema = new Schema(
 
 const buildingSchema = new Schema(
   {
-    user_id: {
+    user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    building_id: {
+    building_name: {
       type: String,
       required: true,
     },
@@ -30,31 +42,3 @@ const buildingSchema = new Schema(
 )
 
 export const BuildingModel = model('Building', buildingSchema)
-=======
-    {
-        floor_number: {type: Number},
-        room_count: {type: Number}
-    },
-    {_id: false}
-)
-
-const buildingSchema = new Schema({
-  user_id: {
-    type: Schema.Types.ObjectId,
-    required: true
-  },
-  building_id: {
-    type: String,
-    required: true
-  },
-  hostel_name: {
-    type: String,
-    required: true
-  },
-  floor_count: [floorSchema]
-},
-{timestamps: true}
-)
-
-export const BuildingModel = model('Building', buildingSchema)
->>>>>>> 3953467e58d0e36dbdf61ab30061a57f1403b162

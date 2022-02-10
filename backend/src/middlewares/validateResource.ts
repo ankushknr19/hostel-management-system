@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
 import { AnyZodObject } from 'zod'
 // when a request comes in, we're gonna provide
-// a schema in the middleware and then its going
+// a schema in the middleware and then it is going
 // to validate the request against that schema
 
-const validate =
+export const validate =
   (schema: AnyZodObject) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -19,4 +19,3 @@ const validate =
     }
   }
 
-export default validate

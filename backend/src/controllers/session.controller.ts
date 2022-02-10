@@ -1,41 +1,43 @@
-import dotenv from 'dotenv'
 import { Request, Response } from 'Express'
+import { get } from 'lodash'
 import { SessionModel } from '../models/session.model'
-import { signJwt } from '../utils/jwt.utils'
-import { validatePassword } from './user.controller'
+import { UserModel } from '../models/user.model'
+import { signJwt, verifyJwt } from '../utils/jwt.utils'
 
-dotenv.config()
-
-// @desc create a new user session
+// @desc create a new user login session
 // @route POST /api/sessions
 // @access private/user
 
 export const createSession = async (req: Request, res: Response) => {
   try {
-    //valildate user password
+    //find user by email and valildate password
     const { email, password } = req.body
 
-    const user = await validatePassword(email, password)
+    const user = await UserModel.findOne({ email })
 
     if (!user) {
-      throw new Error('Invalid email or password')
+      throw new Error('invalid email')
     }
+
+    const isValid = await user.comparePassword(password)
+
+    if (!isValid) {
+      throw new Error('invalid password')
+    }
+
     //create a session
     const session = await SessionModel.create({ user: user._id })
 
     //create access token
-    const { accessTokenTimeToLive } = process.env
-
     const accessToken = signJwt(
-      { userId: user._id, session: session._id }, //!!should not pass all of 'user'!!
-      { expiresIn: accessTokenTimeToLive } //15 minutes
+      { userId: user._id, sessionId: session._id },
+      { expiresIn: process.env.accessTokenTimeToLive }
     )
 
     //create refresh token
-    const { refreshTokenTimeToLive } = process.env
     const refreshToken = signJwt(
-      { userId: user._id, session: session._id },
-      { expiresIn: refreshTokenTimeToLive } //1 year
+      { userId: user._id, sessionId: session._id },
+      { expiresIn: process.env.refreshTokenTimeToLive }
     )
 
     //return access token and refresh token
@@ -52,7 +54,6 @@ export const createSession = async (req: Request, res: Response) => {
 export const getSession = async (_req: Request, res: Response) => {
   try {
     //get user id
-    console.log(res.locals.user)
     const userId = res.locals.user.userId
 
     //find session of a user with valid token
@@ -65,4 +66,61 @@ export const getSession = async (_req: Request, res: Response) => {
   } catch (error: any) {
     res.status(404).send(error.message)
   }
+}
+
+// @desc delete the user session
+// @route DELETE /api/sessions
+// @access private/user
+
+export const deleteSession = async (_req: Request, res: Response) => {
+  try {
+    const sessionId = res.locals.user.sessionId
+
+    await SessionModel.updateOne({ _id: sessionId }, { valid: false })
+
+    res.send({
+      accessToken: null,
+      refreshToken: null,
+    })
+  } catch (error: any) {
+    res.status(404).send(error.message)
+  }
+}
+
+// @desc reissue a new accesstoken after it expired and refresh token exists
+//  @access private/user
+
+export async function reissueAccessToken({
+  refreshToken,
+}: {
+  refreshToken: string
+}) {
+  //verify refresh token
+  const { decoded } = verifyJwt(refreshToken)
+
+  //we need session id to make sure the session is still valid before issuing accesstoken
+  if (!decoded || !get(decoded, 'sessionId')) {
+    return false
+  }
+
+  const session = await SessionModel.findById(get(decoded, 'sessionId'))
+
+  if (!session || !session.valid) {
+    return false
+  }
+
+  //find user
+  const user = await UserModel.findById(session?.user)
+
+  if (!user) {
+    return false
+  }
+
+  //if we do have a user, create a new accesstoken
+  const accessToken = signJwt(
+    { userId: user?._id, sessionId: session?._id },
+    { expiresIn: process.env.accessTokenTimeToLive }
+  )
+
+  return accessToken
 }

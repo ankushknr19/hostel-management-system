@@ -1,9 +1,12 @@
 import express from 'express'
 import { createHostel } from '../controllers/hostel.controller'
+import { requireUser } from '../middlewares/requireUser'
+import { validate } from '../middlewares/validateResource'
+import { createHostelSchema } from '../schemas/hostel.schema'
 
-//put sub document 'hostel' in user collection
 const router = express.Router()
 
-router.route('/:id').put(createHostel)
+//put sub document 'hostel' in user collection
+router.route('/').put(requireUser, validate(createHostelSchema), createHostel)
 
 export default router
