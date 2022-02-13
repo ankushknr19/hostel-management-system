@@ -3,6 +3,7 @@ import {
   createSession,
   deleteSession,
   getSession,
+  reissueAccessToken,
 } from '../controllers/session.controller'
 import { requireUser } from '../middlewares/requireUser'
 import { validate } from '../middlewares/validateResource'
@@ -15,5 +16,7 @@ router
   .post(validate(createSessionSchema), createSession)
   .get(requireUser, getSession)
   .delete(requireUser, deleteSession)
+
+router.route('/refreshtoken').post(requireUser, reissueAccessToken)
 
 export default router

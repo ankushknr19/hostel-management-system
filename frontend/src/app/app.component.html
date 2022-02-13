@@ -1,0 +1,6 @@
+<app-navbar
+  [isLoggedIn]="isLoggedIn"
+  [currentUser]="user"
+  (logoutEvent)="logout()"
+></app-navbar>
+<router-outlet></router-outlet>

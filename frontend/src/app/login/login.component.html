@@ -1,0 +1,75 @@
+<section class="hero">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-5-tablet is-4-desktop is-3-fullscreen">
+          <form
+            class="box"
+            *ngIf="!isLoggedIn"
+            name="form"
+            (ngSubmit)="onSubmit()"
+            #loginForm="ngForm"
+          >
+            <h3 class="title is-3">Login</h3>
+            <div class="field">
+              <label for="email" class="label">Email</label>
+              <div class="control has-icons-left">
+                <input
+                  class="input"
+                  type="email"
+                  id="email"
+                  name="email"
+                  [(ngModel)]="form.email"
+                  required
+                  #email="ngModel"
+                />
+                <span class="icon is-left">
+                  <fa-icon [icon]="faUser"></fa-icon>
+                </span>
+              </div>
+              <div
+                [hidden]="email.valid || email.pristine"
+                class="alert is-primary"
+              >
+                Email is required!
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="password" class="label">Password</label>
+              <div class="control has-icons-left">
+                <input
+                  class="input"
+                  type="password"
+                  id="password"
+                  name="password"
+                  [(ngModel)]="form.password"
+                  required
+                  minlength="6"
+                  #password="ngModel"
+                />
+                <span class="icon is-left">
+                  <fa-icon [icon]="faKey"></fa-icon>
+                </span>
+              </div>
+              <!-- error message here -->
+              <div [hidden]="password.pristine" class="alert is-primary">
+                invalid password
+              </div>
+            </div>
+
+            <div class="control">
+              <button
+                class="button is-success"
+                (click)="onSubmit()"
+                [disabled]="!loginForm.form.valid"
+              >
+                Login
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

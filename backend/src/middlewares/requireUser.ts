@@ -11,7 +11,7 @@ export const requireUser = (
   //in deserialzeUser, we put the user in the response object because they had a valid token
 
   if (!user) {
-    return res.status(403).send('invalid token') //forbidden
+    return res.status(401).send('unauthorized, invalid token') //forbidden
   }
 
   return next()

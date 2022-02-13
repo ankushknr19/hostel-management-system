@@ -8,7 +8,9 @@ import { UserModel } from '../models/user.model'
 export const createHostel = async (req: Request, res: Response) => {
   try {
     const user_id = res.locals.user.userId
-    const user = await UserModel.findOne({ _id: user_id }).exec()
+    const user = await UserModel.findOne({ _id: user_id })
+      .select('-password')
+      .exec()
 
     if (!user) {
       throw new Error('user not found')

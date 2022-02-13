@@ -1,17 +1,21 @@
 import dotenv from 'dotenv'
 import express, { Request, Response } from 'express'
 import { connectDB } from './utils/db.connect'
+import helmet from 'helmet'
 import userRoutes from './routes/user.routes'
 import sessionRoutes from './routes/session.routes'
 import hostelRoutes from './routes/hostel.routes'
 import buildingRoutes from './routes/building.routes'
 import roomRoutes from './routes/room.routes'
 import { deserialzeUser } from './middlewares/deserializeUser'
+import cors from 'cors'
 
 dotenv.config()
 const app = express()
 
+app.use(cors())
 app.use(express.json())
+app.use(helmet())
 app.use(deserialzeUser)
 
 connectDB()

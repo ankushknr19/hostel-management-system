@@ -47,7 +47,7 @@ export const createSession = async (req: Request, res: Response) => {
   }
 }
 
-// @desc get the user session
+// @desc get the current user session
 // @route GET /api/sessions
 // @access private/user
 
@@ -68,7 +68,7 @@ export const getSession = async (_req: Request, res: Response) => {
   }
 }
 
-// @desc delete the user session
+// @desc delete the current user session
 // @route DELETE /api/sessions
 // @access private/user
 
@@ -88,6 +88,7 @@ export const deleteSession = async (_req: Request, res: Response) => {
 }
 
 // @desc reissue a new accesstoken after it expired and refresh token exists
+//route /api/sessions/refreshtokens
 //  @access private/user
 
 export async function reissueAccessToken({
@@ -95,32 +96,40 @@ export async function reissueAccessToken({
 }: {
   refreshToken: string
 }) {
-  //verify refresh token
-  const { decoded } = verifyJwt(refreshToken)
+  try {
+    //verify refresh token
+    const { decoded, expired } = verifyJwt(refreshToken)
 
-  //we need session id to make sure the session is still valid before issuing accesstoken
-  if (!decoded || !get(decoded, 'sessionId')) {
+    //we need session id to make sure the session is still valid before issuing accesstoken
+    if (!decoded || !get(decoded, 'sessionId')) {
+      return false
+    }
+
+    if (expired) {
+      return false
+    }
+
+    const session = await SessionModel.findById(get(decoded, 'sessionId'))
+
+    if (!session || !session.valid) {
+      return false
+    }
+
+    //find user
+    const user = await UserModel.findById(session?.user)
+
+    if (!user) {
+      return false
+    }
+
+    //if we do have a user, create a new accesstoken
+    const accessToken = signJwt(
+      { userId: user?._id, sessionId: session?._id },
+      { expiresIn: process.env.accessTokenTimeToLive }
+    )
+
+    return accessToken
+  } catch (error: any) {
     return false
   }
-
-  const session = await SessionModel.findById(get(decoded, 'sessionId'))
-
-  if (!session || !session.valid) {
-    return false
-  }
-
-  //find user
-  const user = await UserModel.findById(session?.user)
-
-  if (!user) {
-    return false
-  }
-
-  //if we do have a user, create a new accesstoken
-  const accessToken = signJwt(
-    { userId: user?._id, sessionId: session?._id },
-    { expiresIn: process.env.accessTokenTimeToLive }
-  )
-
-  return accessToken
 }

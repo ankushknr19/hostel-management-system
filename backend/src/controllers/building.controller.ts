@@ -8,19 +8,19 @@ import { UserModel } from '../models/user.model'
 // @access private/user
 
 export const createBuilding = async (req: Request, res: Response) => {
-    try {
-      const user_id = res.locals.user.userId
+  try {
+    const user_id = res.locals.user.userId
     const { building_name } = req.body
 
-    const user = await UserModel.findOne({ user_id })
+    const user = await UserModel.findOne({ user_id }).select('-password')
     if (!user) {
       throw new Error('user doesnot exist')
     }
 
     const newBuilding = await BuildingModel.create({
-        user_id,
-        building_name,
-        hostel_name: user.hostel.name
+      user_id,
+      building_name,
+      hostel_name: user.hostel.name,
     })
 
     res.status(200).json(newBuilding)

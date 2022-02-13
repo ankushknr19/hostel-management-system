@@ -1,0 +1,44 @@
+<section class="hero">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-5-tablet is-4-desktop is-3-fullscreen">
+          <form class="box" action="">
+            <h3 class="title is-3">Sign Up</h3>
+            <div class="field">
+              <label for="email" class="label">Email</label>
+              <div class="control has-icons-left">
+                <input class="input" type="email" id="email" required />
+                <span class="icon is-left">
+                  <fa-icon [icon]="faUser"></fa-icon>
+                </span>
+              </div>
+            </div>
+            <div class="field">
+              <label for="phone" class="label">Phone Number</label>
+              <div class="control has-icons-left">
+                <input class="input" type="string" id="phone" required />
+                <span class="icon is-left">
+                  <fa-icon [icon]="faPhone"></fa-icon>
+                </span>
+              </div>
+            </div>
+            <div class="field">
+              <label for="password" class="label">Password</label>
+              <div class="control has-icons-left">
+                <input class="input" type="password" id="password" required />
+                <span class="icon is-left">
+                  <fa-icon [icon]="faKey"></fa-icon>
+                </span>
+              </div>
+            </div>
+
+            <div class="control">
+              <button class="button is-primary" type="submit">Sign Up</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

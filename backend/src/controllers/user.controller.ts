@@ -11,7 +11,7 @@ export const createUser = async (req: Request, res: Response) => {
     //the request object is already validated before coming here
     const { email, password, phone_number } = req.body
 
-    const checkDB = await UserModel.findOne({ email })
+    const checkDB = await UserModel.findOne({ email }).select('email')
     if (checkDB) {
       throw new Error('user with given email already exists')
     }
@@ -28,38 +28,21 @@ export const createUser = async (req: Request, res: Response) => {
   }
 }
 
-// @desc get all users
-// @route GET /api/users
+// @desc get current user
+// @route GET /api/users/me
 // @access private/admin
-
-export const allUsers = async (_req: Request, res: Response) => {
+export const currentUser = async (_req: Request, res: Response) => {
   try {
-    const users = await UserModel.find().exec()
-    if (!users) {
-      throw new Error('users not found')
-    }
+    const user_id = res.locals.user.userId
 
-    res.status(200).json(users) //sends password !!
+    const currentUser = await UserModel.findById(user_id)
+      .select('-password')
+      .exec()
+
+    if (!currentUser) throw new Error('User not found')
+
+    res.json(currentUser)
   } catch (error: any) {
-    res.status(404).send(error.message)
-  }
-}
-
-// @desc get a user
-// @route GET /api/users/:id
-// @access private/admin
-
-export const aUser = async (req: Request, res: Response) => {
-  try {
-    const user_id = req.params.id
-    const user = await UserModel.findOne({ _id: user_id }).exec()
-
-    if (!user) {
-      throw new Error('user not found')
-    }
-
-    res.status(200).json(_.omit(user.toJSON(), 'password'))
-  } catch (error: any) {
-    res.status(404).send(error.message)
+    res.send(error.message)
   }
 }
